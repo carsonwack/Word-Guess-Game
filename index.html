@@ -9,11 +9,14 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link href="https://fonts.googleapis.com/css?family=Abril+Fatface" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- <script type="text/javascript" src="assets/javascript/game.js"></script> -->
 </head>
 
 <body>
 
     <h1>Cool Words/Terms Hangman</h1>
+
+
 
     <!-- grid -->
     <div class=“container”>
@@ -34,6 +37,10 @@
                 <p id="guesses-remaining"></p>
                 <p>Letters Aready Guessed: </p>
                 <p id="letters-guessed"></p>
+                <br>
+                <h3 id="winOrLoss"></h3>
+                <br>
+                <iframe src="https://giphy.com/embed/YISOEFtfxWvuw" width="360" height="480" frameBorder="0" class="giphy-embed"></iframe>
 
             </div>
             <div class="col-md-3">
@@ -42,31 +49,51 @@
     </div>
 
     <script type="text/javascript">
+
+        //add on ready
+
+
         function doAdelay() {
-            setTimeout(function () { return true; }, 25000);
+            setTimeout(function () { return true; }, 3000);
         };
 
         let definitions = ['speaking quickly, but insincerely', 'trying to be kind but instead revealing a sense of superiority', 'showing unassertive/timid behavior rather than confidently addressing something', 'a dilemma with no escape due to two bad and dependent options', 'appease; placate; pacify; conciliate; calm down', 'banal, hackneyed, clichéd, platitudinous, vapid'];
-
         let terms = ['glib', 'patronizing', 'passive aggressive', 'catch 22', 'mollify', 'trite'];
-
         let winsTag = document.getElementById("wins");
         let definitionTag = document.getElementById("definition")
         let wordTag = document.getElementById("current-word");
         let guessesRemainingTag = document.getElementById("guesses-remaining");
         let lettersGuessedTag = document.getElementById("letters-guessed");
-
         let wins = 0;
         let guessesRemaining = 13;
         let lettersGuessed = "";
         let randomTermNum = Math.floor(Math.random() * terms.length);
         let randomDef = definitions[randomTermNum];
         let randomTerm = terms[randomTermNum];
-
         let blanks = ""
         for (let i = 0; i < randomTerm.length; i += 1) {
             blanks = blanks + "_ ";
         }
+
+
+        function newGame() {
+            lettersGuessed = "";
+            guessesRemaining = 13;
+            randomTermNum = Math.floor(Math.random() * terms.length);
+            randomDef = definitions[randomTermNum];
+            randomTerm = terms[randomTermNum];
+            blanks = ""
+            for (let i = 0; i < randomTerm.length; i += 1) {
+                blanks = blanks + "_ ";
+            }
+            wordTag.textContent = blanks;
+            definitionTag.textContent = randomDef;
+            winsTag.textContent = wins;
+            guessesRemainingTag.textContent = guessesRemaining;
+            lettersGuessedTag.textContent = lettersGuessed;
+            $("#winOrLoss").text("");
+        }
+
 
         wordTag.textContent = blanks;
         definitionTag.textContent = randomDef;
@@ -79,11 +106,9 @@
         }
 
 
-
         document.onkeyup = function () {
             let letterGuess = event.key;
             let accumulator = 0
-
             for (let j = 0; j < randomTerm.length; j += 1) {
                 if (letterGuess === randomTerm[j]) {
                     blanks = replaceAt(blanks, (j * 2), letterGuess);
@@ -102,35 +127,25 @@
                     winsTag.textContent = wins;
                     let audio = new Audio('smack-that.mp3');
                     audio.play();
-                    
-                    return;
-
+                    doAdelay()
+                    $("#winOrLoss").text("YOU WON");
+                    // $("#winOrLoss").append(<a href="https://giphy.com/gifs/akon-rick-ross-YISOEFtfxWvuw">via GIPHY</a>);
+                    setTimeout(function() {
+                        newGame();
+                        audio.pause();
+                        audio.currentTime = 0;
+                    }, 42000);
                 }
-
-                if (guessesRemaining == 0) {
-                    var node = document.createElement("h3");
-                    document.getElementById("current-word").appendChild(node);
-
-                    doAdelay();
-
-                    return;
+                if (guessesRemaining === 0) {
+                    guessesRemainingTag.textContent = guessesRemaining;
+                    $("#winOrLoss").text("YOU LOST");
+                    setTimeout(function(){ newGame(); }, 3000);
                 }
             }
-            
+
             guessesRemainingTag.textContent = guessesRemaining;
             lettersGuessedTag.textContent = lettersGuessed;
         }
-
-
-
-
-
-
-// https://giphy.com/gifs/akon-IHbXSoMMK244E
-
-
-
-
 
     </script>
 

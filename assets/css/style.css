@@ -21,3 +21,7 @@ h1 {
     clear: both;
     display: table;
 }
+
+iframe {
+  display: none;
+}
